@@ -12,23 +12,61 @@
  */
 
 // 구독자 모델 요청
-const Subscriber = "";
+const Subscriber = require("../models/Subscriber");
 
 // 구독자 가져오기
 exports.getAllSubscribers = (req, res, next) => {
-  // @TODO...
+  Subscriber.find({})
+  .exec()
+  .then(Subscribers => {
+    console.log("Found: ", Subscribers);
+    res.render("subscribers", {
+      Subscribers: Subscribers
+    });
+  })
+  .catch(error => {
+    console.log(`Error: ${error.message}`);
+    return next(error);
+  });
 };
 
 // 구독 페이지 레더링
 exports.getSubscriptionPage = (req, res) => {
-  // @TODO...
+  res.render("contact");
 };
 
 // 구독자 저장
 exports.saveSubscriber = (req, res) => {
-  // @TODO...
+  let newSubscriber = new Subscriber({
+    name: req.body.name,
+    email: req.body.email,
+    phoneNumber: req.body.newsletter,
+    profileImg: req.body.profileImg
+  });
+
+
+  console.log(req.body.newsletter);
+
+  newSubscriber
+    .save()
+    .then(result => {
+      res.render("thanks");
+    })
+    .catch(error => {
+      res.send(error);
+    });
 };
 
 exports.deleteAllSubscribers = (req, res) => {
-  // @TODO...
+  Subscriber.deleteMany({})
+  .exec()
+  .then(result => {
+    res.render("subscribers", {
+      subscriber: []
+    });
+  })
+  .catch(error => {
+    console.log(`Error: ${error.message}`);
+    return next(error);
+  })
 };
